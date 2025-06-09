@@ -1,14 +1,15 @@
 package be.ehb.enterpriseapplications.werkstuk.controller;
 
 import be.ehb.enterpriseapplications.werkstuk.model.Person;
-import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;
 import be.ehb.enterpriseapplications.werkstuk.service.PersonService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Optional;
 
 @Validated
 @RestController
@@ -31,12 +32,13 @@ public class PersonController {
     }
 
     @PostMapping
-    Person save(@Valid @RequestBody Person person) {
-        return personService.save(person);
+    ResponseEntity<Person> save(@Valid @RequestBody Person person) {
+        personService.save(person);
+        return ResponseEntity.ok(person);
     }
 
     @GetMapping("/{id}")
-    Person findById(@PathVariable String id) {
+    Optional<Person> findById(@PathVariable String id) {
         return personService.findById(id);
     }
 }

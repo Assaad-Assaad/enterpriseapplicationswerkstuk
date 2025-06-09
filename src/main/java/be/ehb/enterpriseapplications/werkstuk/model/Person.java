@@ -12,12 +12,12 @@ import java.util.Objects;
 public class Person {
     @Id
     @Column(name = "auction_person_number", unique = true, nullable = false, updatable = false)
-   // @AuctionPersonNumber
+    @AuctionPersonNumber
     private String auctionPersonNumber;
 
 
     @Column(name = "name", nullable = false)
-    @NotBlank(message = "Name cannot be blank")
+    @NotBlank(message = "Name cannot be blank!")
     private String name;
 
     @Email(message = "Email address is not valid")
