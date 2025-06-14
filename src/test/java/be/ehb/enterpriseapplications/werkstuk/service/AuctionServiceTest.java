@@ -13,14 +13,14 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.springframework.data.jpa.domain.Specification;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class AuctionServiceTest {
@@ -82,7 +82,7 @@ class AuctionServiceTest {
         Auction auction = new Auction("Auction", 100.0, auctioneer, LocalDateTime.now().plusDays(1));
         auction.setId(1);
         when(auctionRepository.findById(1)).thenReturn(Optional.of(auction));
-        when(auctionBidRepository.findAllByAuctionId(1)).thenReturn(List.of());
+        when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of());
 
         AuctionBid bid = new AuctionBid(90, auction, bidder);
 
@@ -96,7 +96,7 @@ class AuctionServiceTest {
         when(auctionRepository.findById(1)).thenReturn(Optional.of(auction));
 
         AuctionBid oldBid = new AuctionBid(100, auction, new Person("888-888-888", "Old Bidder", "old@auction.com"));
-        when(auctionBidRepository.findAllByAuctionId(1)).thenReturn(List.of(oldBid));
+        when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of(oldBid));
 
         AuctionBid newBid = new AuctionBid(90, auction, bidder);
 
@@ -109,7 +109,7 @@ class AuctionServiceTest {
         Auction auction = new Auction("Valid Auction", 50.0, auctioneer, LocalDateTime.now().plusDays(1));
         auction.setId(1);
         when(auctionRepository.findById(1)).thenReturn(Optional.of(auction));
-        when(auctionBidRepository.findAllByAuctionId(1)).thenReturn(List.of());
+        when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of());
 
         AuctionBid bid = new AuctionBid(60, auction, bidder);
 
@@ -118,6 +118,59 @@ class AuctionServiceTest {
         verify(auctionBidRepository).save(bid);
     }
 
+
+    @Test
+    void testSearchAuctions_withCategoryAndMinPrice() {
+
+        String category = "Electronics";
+        Double minPrice = 50.0;
+
+
+        Auction auction = new Auction();
+        auction.setProductName("Phone");
+        auction.setStartPrice(100);
+        auction.setEndTime(LocalDateTime.now().plusDays(1));
+
+        List<Auction> expectedAuctions = List.of(auction);
+
+        when(auctionRepository.findAll(any(Specification.class))).thenReturn(expectedAuctions);
+
+        List<Auction> result = auctionService.searchAuctions(category, minPrice, null, null);
+
+        assertEquals(1, result.size());
+        assertEquals("Phone", result.get(0).getProductName());
+
+        verify(auctionRepository, times(1)).findAll(any(Specification.class));
+    }
+
+    @Test
+    void testSearchAuctions_withActiveStatusOnly() {
+        Auction activeAuction = new Auction();
+        activeAuction.setProductName("Active Laptop");
+        activeAuction.setEndTime(LocalDateTime.now().plusDays(1));
+
+        when(auctionRepository.findAll(any(Specification.class)))
+                .thenReturn(List.of(activeAuction));
+
+        List<Auction> result = auctionService.searchAuctions(null, null, null, "ACTIVE");
+
+        assertEquals(1, result.size());
+        assertTrue(result.get(0).getEndTime().isAfter(LocalDateTime.now()));
+    }
+
+    @Test
+    void testSearchAuctions_withMaxPriceOnly() {
+        Auction expectedAuction = new Auction();
+        expectedAuction.setProductName("TV");
+        when(auctionRepository.findAll(any(Specification.class)))
+                .thenReturn(List.of(expectedAuction));
+
+        List<Auction> result = auctionService.searchAuctions(null, null, 500.0, null);
+
+        assertEquals(1, result.size());
+        assertEquals("TV", result.get(0).getProductName());
+        verify(auctionRepository).findAll(any(Specification.class));
+    }
 
 
 

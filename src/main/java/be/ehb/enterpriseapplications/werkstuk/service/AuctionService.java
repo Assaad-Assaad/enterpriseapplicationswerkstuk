@@ -6,9 +6,11 @@ import be.ehb.enterpriseapplications.werkstuk.exception.FraudException;
 import be.ehb.enterpriseapplications.werkstuk.exception.InsufficientBidException;
 import be.ehb.enterpriseapplications.werkstuk.model.Auction;
 import be.ehb.enterpriseapplications.werkstuk.model.AuctionBid;
+import be.ehb.enterpriseapplications.werkstuk.model.AuctionSpecifications;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionBidRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 
 import java.time.LocalDateTime;
@@ -54,7 +56,7 @@ public class AuctionService {
             throw new FraudException("You cannot bid on your own auction");
         }
 
-        List<AuctionBid> auctionBids = auctionBidRepository.findAllByAuctionId(auctionId);
+        List<AuctionBid> auctionBids = auctionBidRepository.findAllByAuction_Id(auctionId);
 
         if (auctionBids.isEmpty()) {
             if (auctionBid.getPrice() < auction.getStartPrice()){
@@ -70,12 +72,38 @@ public class AuctionService {
 
 
     public List<AuctionBid> findAllBidsByForAuction(int auctionId) {
-        return auctionBidRepository.findAllByAuctionId(auctionId);
+        return auctionBidRepository.findAllByAuction_Id(auctionId);
     }
 
     private boolean isNewBidHigherThanAllBids(List<AuctionBid> auctionBids, AuctionBid auctionBid) {
         double highestBid = auctionBids.stream().map(AuctionBid::getPrice).max(Double::compareTo).get();
         return auctionBid.getPrice() > highestBid;
     }
+
+
+
+    public List<Auction> searchAuctions(String categoryName, Double minPrice, Double maxPrice, String status) {
+        Specification<Auction> spec = Specification.allOf();
+
+        if (categoryName != null && !categoryName.isEmpty()) {
+            spec = Specification.allOf(spec, AuctionSpecifications.hasCategory(categoryName));
+        }
+
+        if (minPrice != null) {
+            spec = Specification.allOf(spec, AuctionSpecifications.minPrice(minPrice));
+        }
+
+        if (maxPrice != null) {
+            spec = Specification.allOf(spec, AuctionSpecifications.maxPrice(maxPrice));
+        }
+
+        if (status != null && !status.isEmpty()) {
+            Boolean isActive = "ACTIVE".equalsIgnoreCase(status);
+            spec = Specification.allOf(spec, AuctionSpecifications.isActive(isActive));
+        }
+
+        return auctionRepository.findAll(spec);
+    }
+
 
 }

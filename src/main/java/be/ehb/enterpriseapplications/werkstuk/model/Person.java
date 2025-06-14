@@ -15,9 +15,8 @@ public class Person {
     @AuctionPersonNumber
     private String auctionPersonNumber;
 
-
+    @NotBlank(message = "Name cannot be blank")
     @Column(name = "name", nullable = false)
-    @NotBlank(message = "Name cannot be blank!")
     private String name;
 
     @Email(message = "Email address is not valid")

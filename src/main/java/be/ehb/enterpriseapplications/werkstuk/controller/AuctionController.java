@@ -25,8 +25,11 @@ public class AuctionController {
 
 
     @GetMapping
-    List<Auction> findAll() {
-        return auctionService.findAll();
+    List<Auction> getAuctions(@RequestParam(required = false) String category,
+                              @RequestParam(required = false) Double minPrice,
+                              @RequestParam(required = false) Double maxPrice,
+                              @RequestParam(required = false) String status) {
+        return auctionService.searchAuctions(category, minPrice, maxPrice, status);
     }
 
     @PostMapping

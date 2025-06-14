@@ -1,6 +1,7 @@
 package be.ehb.enterpriseapplications.werkstuk.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
@@ -15,9 +16,10 @@ public class AuctionBid {
     @Column(name = "price", nullable = false)
     private double price;
 
-    @JoinColumn(name = "auction_id")
+
+
     @ManyToOne
-    @JsonIgnore
+    @JsonIgnoreProperties("bids")
     private Auction auction;
 
     @NotNull

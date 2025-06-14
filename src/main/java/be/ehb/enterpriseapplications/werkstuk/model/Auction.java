@@ -1,11 +1,14 @@
 package be.ehb.enterpriseapplications.werkstuk.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity(name = "auctions")
 public class Auction {
@@ -22,14 +25,26 @@ public class Auction {
     @Column(name = "start_price", nullable = false)
     private double startPrice;
 
-    @JoinColumn(name = "person_id")
-    @ManyToOne
-    private Person person;
-
     @NotNull
     @Column(name = "end_time", nullable = false)
     @JsonFormat(pattern = "dd-MM-yyyy HH:mm:ss")
     private LocalDateTime endTime;
+
+
+
+    @JoinColumn(name = "person_id")
+    @ManyToOne
+    private Person person;
+
+
+    @OneToMany
+    @JoinColumn(name = "auction_id")
+    @JsonIgnoreProperties("auction")
+    private List<AuctionBid> bids = new ArrayList<>();
+
+    @ManyToMany(mappedBy ="auctions", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("auctions")
+    private List<Category> categories = new ArrayList<>();
 
     public Auction() {
     }
@@ -79,6 +94,22 @@ public class Auction {
 
     public void setEndTime(LocalDateTime endTime) {
         this.endTime = endTime;
+    }
+
+    public List<Category> getCategories() {
+        return categories;
+    }
+
+    public void setCategories(List<Category> categories) {
+        this.categories = categories;
+    }
+
+    public List<AuctionBid> getBids() {
+        return bids;
+    }
+
+    public void setBids(List<AuctionBid> bids) {
+        this.bids = bids;
     }
 
     @Override

@@ -8,5 +8,5 @@ import java.util.List;
 
 public interface AuctionBidRepository extends JpaRepository<AuctionBid, Integer> {
 
-    List<AuctionBid> findAllByAuctionId(int auctionId);
+    List<AuctionBid> findAllByAuction_Id(int auctionId);
 }
