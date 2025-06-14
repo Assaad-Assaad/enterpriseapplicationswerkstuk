@@ -6,7 +6,7 @@ import be.ehb.enterpriseapplications.werkstuk.exception.FraudException;
 import be.ehb.enterpriseapplications.werkstuk.exception.InsufficientBidException;
 import be.ehb.enterpriseapplications.werkstuk.model.Auction;
 import be.ehb.enterpriseapplications.werkstuk.model.AuctionBid;
-import be.ehb.enterpriseapplications.werkstuk.model.AuctionSpecifications;
+import be.ehb.enterpriseapplications.werkstuk.util.AuctionSpecifications;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionBidRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionRepository;
 import org.springframework.beans.factory.annotation.Autowired;

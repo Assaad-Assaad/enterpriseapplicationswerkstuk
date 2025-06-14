@@ -1,5 +1,8 @@
-package be.ehb.enterpriseapplications.werkstuk.model;
+package be.ehb.enterpriseapplications.werkstuk.util;
 
+import be.ehb.enterpriseapplications.werkstuk.model.Auction;
+import be.ehb.enterpriseapplications.werkstuk.model.AuctionBid;
+import be.ehb.enterpriseapplications.werkstuk.model.Category;
 import jakarta.persistence.criteria.Expression;
 import jakarta.persistence.criteria.Join;
 import jakarta.persistence.criteria.Root;
