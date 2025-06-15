@@ -33,8 +33,8 @@ class AuctionServiceTest {
     @Mock
     private AuctionBidRepository auctionBidRepository;
 
-    Person auctioneer = new Person("123-456-789", "Test", "test@auction.com");
-    Person bidder =  new Person("999-999-999", "Bidder", "bidder@auction.com");
+    Person auctioneer = new Person("123-456-789", "Test", "test@auction.com","987654");
+    Person bidder =  new Person("999-999-999", "Bidder", "bidder@auction.com","476349");
 
     @BeforeEach
     void setUp() {
@@ -95,7 +95,7 @@ class AuctionServiceTest {
         auction.setId(1);
         when(auctionRepository.findById(1)).thenReturn(Optional.of(auction));
 
-        AuctionBid oldBid = new AuctionBid(100, auction, new Person("888-888-888", "Old Bidder", "old@auction.com"));
+        AuctionBid oldBid = new AuctionBid(100, auction, new Person("888-888-888", "Old Bidder", "old@auction.com","123456"));
         when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of(oldBid));
 
         AuctionBid newBid = new AuctionBid(90, auction, bidder);
