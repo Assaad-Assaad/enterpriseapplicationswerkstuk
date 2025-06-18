@@ -1,4 +1,4 @@
-package be.ehb.enterpriseapplications.werkstuk.service;
+package be.ehb.enterpriseapplications.werkstuk.security;
 
 import be.ehb.enterpriseapplications.werkstuk.model.Person;
 import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;

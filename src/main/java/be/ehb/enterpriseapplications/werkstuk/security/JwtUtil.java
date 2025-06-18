@@ -1,4 +1,4 @@
-package be.ehb.enterpriseapplications.werkstuk.util;
+package be.ehb.enterpriseapplications.werkstuk.security;
 
 
 import io.jsonwebtoken.*;

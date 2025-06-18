@@ -1,6 +1,5 @@
-package be.ehb.enterpriseapplications.werkstuk.util;
+package be.ehb.enterpriseapplications.werkstuk.security;
 
-import be.ehb.enterpriseapplications.werkstuk.service.CustomUserDetailsService;
 import jakarta.servlet.*;
 import jakarta.servlet.http.*;
 import org.springframework.beans.factory.annotation.Autowired;

@@ -8,7 +8,7 @@ import be.ehb.enterpriseapplications.werkstuk.model.Person;
 import be.ehb.enterpriseapplications.werkstuk.model.Role;
 import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.RoleRepository;
-import be.ehb.enterpriseapplications.werkstuk.util.JwtUtil;
+import be.ehb.enterpriseapplications.werkstuk.security.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 

@@ -5,8 +5,7 @@ import be.ehb.enterpriseapplications.werkstuk.model.AuctionBid;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
-
-import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.List;
 
 public interface AuctionBidRepository extends JpaRepository<AuctionBid, Integer> {
@@ -25,5 +24,5 @@ public interface AuctionBidRepository extends JpaRepository<AuctionBid, Integer>
             "JOIN b.auction a " +
             "WHERE a.endTime BETWEEN :start AND :end " +
             "GROUP BY a.id) AS highestBids")
-    Double sumTotalRevenue(@Param("start") LocalDate start, @Param("end") LocalDate end);
+    Double sumTotalRevenue(@Param("start") LocalDateTime  start, @Param("end") LocalDateTime end);
 }

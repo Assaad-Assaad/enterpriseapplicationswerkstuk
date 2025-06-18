@@ -13,19 +13,15 @@ import be.ehb.enterpriseapplications.werkstuk.util.AuctionSpecifications;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionBidRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionRepository;
 import io.micrometer.core.instrument.MeterRegistry;
-import io.micrometer.core.instrument.simple.SimpleMeterRegistry;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.cache.annotation.CacheEvict;
 import org.springframework.cache.annotation.Cacheable;
 import org.springframework.data.jpa.domain.Specification;
-import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
-
 import java.time.LocalDateTime;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Optional;
+
 
 @Service
 public class AuctionService {

@@ -10,12 +10,17 @@ import be.ehb.enterpriseapplications.werkstuk.repository.AuctionBidRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;
 import io.micrometer.core.instrument.MeterRegistry;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.data.jpa.domain.Specification;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
+
 
 import java.time.LocalDateTime;
 import java.util.List;
@@ -56,10 +61,13 @@ class AuctionServiceTest {
 
     @Test
     void givenAuctionWithValidEndTime_whenSaveAuction_thenAuctionIsSaved() {
-       Auction auction = new Auction("Auction", 50.0, auctioneer, LocalDateTime.now().plusDays(1));
-       auctionService.createAuction(auction);
+        Auction auction = new Auction("Auction", 50.0, auctioneer, LocalDateTime.now().plusDays(1));
+
+        mockLoggedInUser("test@auction.com", auctioneer);
+        auctionService.createAuction(auction);
         verify(auctionRepository).save(auction);
     }
+
 
     @Test
     void givenClosedAuction_whenBid_thenThrowAuctionClosedException() {
@@ -79,9 +87,13 @@ class AuctionServiceTest {
         when(auctionRepository.findById(1)).thenReturn(Optional.of(auction));
 
         AuctionBid bid = new AuctionBid(60, auction, auctioneer);
+
+        mockLoggedInUser("test@auction.com", auctioneer);
+
         assertThrows(FraudException.class, () -> auctionService.bidOnAuction(1, bid));
         assertEquals(1, fakeMailService.getEmails().size());
     }
+
 
     @Test
     void givenNoPreviousBidsAndBidTooLow_whenBid_thenThrowInsufficientBidException() {
@@ -91,9 +103,11 @@ class AuctionServiceTest {
         when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of());
 
         AuctionBid bid = new AuctionBid(90, auction, bidder);
+        mockLoggedInUser("bidder@example.com", bidder);
 
         assertThrows(InsufficientBidException.class, () -> auctionService.bidOnAuction(1, bid));
     }
+
 
     @Test
     void givenExistingHigherBid_whenLowerBid_thenThrowInsufficientBidException() {
@@ -101,13 +115,15 @@ class AuctionServiceTest {
         auction.setId(1);
         when(auctionRepository.findById(1)).thenReturn(Optional.of(auction));
 
-        AuctionBid oldBid = new AuctionBid(100, auction, new Person("888-888-888", "Old Bidder", "old@auction.com","123456"));
+        AuctionBid oldBid = new AuctionBid(100, auction, new Person("888-888-888", "Old Bidder", "old@auction.com", "123456"));
         when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of(oldBid));
 
         AuctionBid newBid = new AuctionBid(90, auction, bidder);
+        mockLoggedInUser("bidder@example.com", bidder);
 
         assertThrows(InsufficientBidException.class, () -> auctionService.bidOnAuction(1, newBid));
     }
+
 
 
     @Test
@@ -118,6 +134,7 @@ class AuctionServiceTest {
         when(auctionBidRepository.findAllByAuction_Id(1)).thenReturn(List.of());
 
         AuctionBid bid = new AuctionBid(60, auction, bidder);
+        mockLoggedInUser("bidder@example.com", bidder);
 
         auctionService.bidOnAuction(1, bid);
 
@@ -125,13 +142,11 @@ class AuctionServiceTest {
     }
 
 
+
     @Test
     void testSearchAuctions_withCategoryAndMinPrice() {
-
         String category = "Electronics";
         Double minPrice = 50.0;
-
-
         Auction auction = new Auction();
         auction.setProductName("Phone");
         auction.setStartPrice(100);
@@ -178,6 +193,22 @@ class AuctionServiceTest {
         verify(auctionRepository).findAll(any(Specification.class));
     }
 
+    @AfterEach
+    void clearSecurityContext() {
+        SecurityContextHolder.clearContext();
+    }
+
+
+    private void mockLoggedInUser(String email, Person user) {
+        Authentication auth = mock(Authentication.class);
+        when(auth.getName()).thenReturn(email);
+
+        SecurityContext securityContext = mock(SecurityContext.class);
+        when(securityContext.getAuthentication()).thenReturn(auth);
+
+        SecurityContextHolder.setContext(securityContext);
+        when(personRepository.findByEmail(email)).thenReturn(Optional.of(user));
+    }
 
 
 }

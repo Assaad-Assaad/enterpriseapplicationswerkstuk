@@ -16,6 +16,8 @@ import org.springframework.stereotype.Service;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.List;
 
 @Service
@@ -36,8 +38,11 @@ public class ReportService {
 
     @Cacheable(value = "revenue", key = "#startDate.toString() + '-' + #endDate.toString()")
     public RevenueReportDto generateRevenueReport(LocalDate startDate, LocalDate endDate) {
-        Double totalRevenue = auctionBidRepository.sumTotalRevenue(startDate, endDate);
-        Long numberOfAuctions = auctionRepository.countByEndTimeBetween(startDate, endDate);
+        LocalDateTime start = startDate.atStartOfDay();
+        LocalDateTime end = endDate.atTime(LocalTime.MAX);
+
+        Double totalRevenue = auctionBidRepository.sumTotalRevenue(start, end);
+        Long numberOfAuctions = auctionRepository.countByEndTimeBetween(start, end);
 
         return new RevenueReportDto(
                 totalRevenue != null ? totalRevenue : 0.0,
@@ -46,6 +51,7 @@ public class ReportService {
                 numberOfAuctions != null ? numberOfAuctions : 0
         );
     }
+
 
 
     @Cacheable("topBidders")

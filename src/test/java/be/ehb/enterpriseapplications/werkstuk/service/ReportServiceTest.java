@@ -13,6 +13,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.when;
@@ -35,8 +37,11 @@ public class ReportServiceTest {
         LocalDate start = LocalDate.of(2024, 1, 1);
         LocalDate end = LocalDate.of(2024, 1, 31);
 
-        when(auctionBidRepository.sumTotalRevenue(start, end)).thenReturn(12000.0);
-        when(auctionRepository.countByEndTimeBetween(start, end)).thenReturn(5L);
+        LocalDateTime startDateTime = start.atStartOfDay();
+        LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
+
+        when(auctionBidRepository.sumTotalRevenue(startDateTime, endDateTime)).thenReturn(12000.0);
+        when(auctionRepository.countByEndTimeBetween(startDateTime, endDateTime)).thenReturn(5L);
 
         RevenueReportDto dto = reportService.generateRevenueReport(start, end);
 
@@ -44,17 +49,22 @@ public class ReportServiceTest {
         assertEquals(5L, dto.getNumberOfAuctions());
     }
 
+
     @Test
     void testExportRevenueToExcel() throws IOException {
         LocalDate start = LocalDate.of(2024, 1, 1);
         LocalDate end = LocalDate.of(2024, 1, 31);
 
-        when(auctionBidRepository.sumTotalRevenue(start, end)).thenReturn(12000.0);
-        when(auctionRepository.countByEndTimeBetween(start, end)).thenReturn(3L);
+        LocalDateTime startDateTime = start.atStartOfDay();
+        LocalDateTime endDateTime = end.atTime(LocalTime.MAX);
+
+        when(auctionBidRepository.sumTotalRevenue(startDateTime, endDateTime)).thenReturn(12000.0);
+        when(auctionRepository.countByEndTimeBetween(startDateTime, endDateTime)).thenReturn(3L);
 
         ByteArrayInputStream stream = reportService.exportRevenueToExcel(start, end);
 
         assertNotNull(stream);
         assertTrue(stream.available() > 0);
     }
+
 }
