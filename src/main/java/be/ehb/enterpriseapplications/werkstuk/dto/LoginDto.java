@@ -1,17 +1,20 @@
 package be.ehb.enterpriseapplications.werkstuk.dto;
 
-import be.ehb.enterpriseapplications.werkstuk.model.AuctionPersonNumber;
+
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
-import java.util.Objects;
 
+@Schema(description = "Login request containing email and password")
 public class LoginDto {
+
 
 
     @NotBlank(message = "Email is required")
     @Email(message = "Email is not valid")
     private String email;
+
 
     @NotBlank(message = "Password is required")
     private String password;

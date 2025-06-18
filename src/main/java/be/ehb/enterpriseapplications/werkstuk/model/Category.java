@@ -2,6 +2,7 @@ package be.ehb.enterpriseapplications.werkstuk.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -9,6 +10,7 @@ import jakarta.validation.constraints.NotNull;
 import java.util.ArrayList;
 import java.util.List;
 
+@Schema(description = "Represents a product or auction category.")
 @Entity(name = "categories")
 public class Category {
     @Id
@@ -21,6 +23,7 @@ public class Category {
 
     private String description;
 
+    @JsonIgnore
     @ManyToMany(cascade = CascadeType.ALL)
     @JsonIgnoreProperties("categories")
     private List<Auction> auctions = new ArrayList<Auction>();

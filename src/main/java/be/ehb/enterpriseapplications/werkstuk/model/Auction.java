@@ -1,7 +1,9 @@
 package be.ehb.enterpriseapplications.werkstuk.model;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +12,7 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
+@Schema(description = "Represents an auction with start/end time, item info, and owner.")
 @Entity(name = "auctions")
 public class Auction {
 
@@ -32,16 +35,19 @@ public class Auction {
 
 
 
+    @JsonIgnore
     @JoinColumn(name = "person_id")
     @ManyToOne
     private Person person;
 
 
+    @JsonIgnore
     @OneToMany
     @JoinColumn(name = "auction_id")
     @JsonIgnoreProperties("auction")
     private List<AuctionBid> bids = new ArrayList<>();
 
+    @JsonIgnore
     @ManyToMany(mappedBy ="auctions", cascade = CascadeType.ALL)
     @JsonIgnoreProperties("auctions")
     private List<Category> categories = new ArrayList<>();

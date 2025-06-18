@@ -2,6 +2,7 @@ package be.ehb.enterpriseapplications.werkstuk.controller;
 
 import be.ehb.enterpriseapplications.werkstuk.model.Person;
 import be.ehb.enterpriseapplications.werkstuk.service.PersonService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 import java.util.Optional;
 
+@Tag(name = "Persons", description = "Operations related to users/persons")
 @Validated
 @RestController
-@RequestMapping("/persons")
+@RequestMapping("/api/v1/persons")
 public class PersonController {
 
     private final PersonService personService;
@@ -38,7 +40,7 @@ public class PersonController {
     }
 
     @GetMapping("/{id}")
-    Optional<Person> findById(@PathVariable String id) {
-        return personService.findById(id);
+    ResponseEntity<Person> findById(@PathVariable String id) {
+        return ResponseEntity.ok(personService.findById(id));
     }
 }

@@ -1,9 +1,11 @@
 package be.ehb.enterpriseapplications.werkstuk.dto;
 
 import be.ehb.enterpriseapplications.werkstuk.model.AuctionPersonNumber;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 
+@Schema(description = "Registration request payload including user info and credentials.")
 public class RegisterDto {
 
     @AuctionPersonNumber

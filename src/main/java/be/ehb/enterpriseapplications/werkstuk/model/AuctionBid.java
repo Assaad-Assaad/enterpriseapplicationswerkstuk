@@ -2,9 +2,11 @@ package be.ehb.enterpriseapplications.werkstuk.model;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 
+@Schema(description = "Represents a bid placed on an auction.")
 @Entity(name = "auction_bids")
 public class AuctionBid {
 
@@ -18,11 +20,12 @@ public class AuctionBid {
 
 
 
+    @JsonIgnore
     @ManyToOne
     @JsonIgnoreProperties("bids")
     private Auction auction;
 
-    @NotNull
+    @JsonIgnore
     @JoinColumn(name = "person_id")
     @ManyToOne
     private Person person;
@@ -30,7 +33,7 @@ public class AuctionBid {
     public AuctionBid() {
     }
 
-    public AuctionBid(@NotNull double price, Auction auction, @NotNull Person person) {
+    public AuctionBid(@NotNull double price, Auction auction,  Person person) {
         this.price = price;
         this.auction = auction;
         this.person = person;

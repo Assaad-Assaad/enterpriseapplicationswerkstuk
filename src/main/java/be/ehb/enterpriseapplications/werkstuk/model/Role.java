@@ -1,7 +1,9 @@
 package be.ehb.enterpriseapplications.werkstuk.model;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.persistence.*;
 
+@Schema(description = "Represents a user role such as ADMIN or USER.")
 @Entity(name = "roles")
 public class Role {
 

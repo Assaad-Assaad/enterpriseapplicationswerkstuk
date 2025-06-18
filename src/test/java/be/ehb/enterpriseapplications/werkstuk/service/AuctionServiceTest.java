@@ -8,6 +8,8 @@ import be.ehb.enterpriseapplications.werkstuk.model.AuctionBid;
 import be.ehb.enterpriseapplications.werkstuk.model.Person;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionBidRepository;
 import be.ehb.enterpriseapplications.werkstuk.repository.AuctionRepository;
+import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;
+import io.micrometer.core.instrument.MeterRegistry;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -32,6 +34,10 @@ class AuctionServiceTest {
     private AuctionRepository auctionRepository;
     @Mock
     private AuctionBidRepository auctionBidRepository;
+    @Mock
+    private PersonRepository personRepository;
+    @Mock
+    private MeterRegistry meterRegistry;
 
     Person auctioneer = new Person("123-456-789", "Test", "test@auction.com","987654");
     Person bidder =  new Person("999-999-999", "Bidder", "bidder@auction.com","476349");
@@ -39,19 +45,19 @@ class AuctionServiceTest {
     @BeforeEach
     void setUp() {
         fakeMailService = new FakeMailService();
-        auctionService = new AuctionService(auctionRepository, auctionBidRepository, fakeMailService);
+        auctionService = new AuctionService(auctionRepository, auctionBidRepository, fakeMailService, meterRegistry, personRepository);
     }
 
     @Test
     void givenAuctionWithInvalidEndTime_whenSaveAuction_thenThrowsAuctionClosedException() {
         Auction auction = new Auction("Auction", 50.0, auctioneer, LocalDateTime.now().minusHours(2));
-        assertThrows(AuctionClosedException.class, () -> auctionService.save(auction));
+        assertThrows(AuctionClosedException.class, () -> auctionService.createAuction(auction));
     }
 
     @Test
     void givenAuctionWithValidEndTime_whenSaveAuction_thenAuctionIsSaved() {
        Auction auction = new Auction("Auction", 50.0, auctioneer, LocalDateTime.now().plusDays(1));
-       auctionService.save(auction);
+       auctionService.createAuction(auction);
         verify(auctionRepository).save(auction);
     }
 

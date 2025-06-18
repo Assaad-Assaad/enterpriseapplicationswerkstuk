@@ -1,5 +1,6 @@
 package be.ehb.enterpriseapplications.werkstuk.service;
 
+import be.ehb.enterpriseapplications.werkstuk.exception.ResourceException;
 import be.ehb.enterpriseapplications.werkstuk.model.Person;
 import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,8 +27,9 @@ public class PersonService {
         return personRepository.save(person);
     }
 
-    public Optional<Person> findById(String id) {
-        return personRepository.findById(id);
+    public Person findById(String id) {
+        return personRepository.findById(id)
+                .orElseThrow(() -> new ResourceException("Auction with id: " + id + " not found"));
     }
 
     public List<Person> findByName(String name) {

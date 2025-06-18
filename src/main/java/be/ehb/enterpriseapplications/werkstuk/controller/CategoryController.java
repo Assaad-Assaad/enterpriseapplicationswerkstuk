@@ -3,6 +3,7 @@ package be.ehb.enterpriseapplications.werkstuk.controller;
 
 import be.ehb.enterpriseapplications.werkstuk.model.Category;
 import be.ehb.enterpriseapplications.werkstuk.repository.CategoryRepository;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Categories", description = "Operations related to auction categories")
 @Validated
 @RestController
-@RequestMapping("/categories")
+@RequestMapping("/api/v1/categories")
 public class CategoryController {
 
     private final CategoryRepository categoryRepository;

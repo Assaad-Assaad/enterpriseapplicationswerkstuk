@@ -4,13 +4,14 @@ import be.ehb.enterpriseapplications.werkstuk.dto.CategoryPerformanceDto;
 import be.ehb.enterpriseapplications.werkstuk.dto.RevenueReportDto;
 import be.ehb.enterpriseapplications.werkstuk.dto.TopBidderDto;
 import be.ehb.enterpriseapplications.werkstuk.service.ReportService;
-import lombok.RequiredArgsConstructor;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.core.io.InputStreamResource;
 import org.springframework.format.annotation.DateTimeFormat;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -21,8 +22,10 @@ import java.io.IOException;
 import java.time.LocalDate;
 import java.util.List;
 
+@Tag(name = "Reports", description = "Auction performance and revenue reports")
+@Validated
 @RestController
-@RequestMapping("/reports")
+@RequestMapping("/api/v1/reports")
 public class ReportController {
 
     private final ReportService reportService;
@@ -36,8 +39,8 @@ public class ReportController {
 
     @GetMapping("/revenue")
     public ResponseEntity<RevenueReportDto> getRevenueReport(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) {
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) {
         return ResponseEntity.ok(reportService.generateRevenueReport(startDate, endDate));
     }
 
@@ -53,8 +56,8 @@ public class ReportController {
 
     @GetMapping("/revenue/excel")
     public ResponseEntity<InputStreamResource> exportRevenueToExcel(
-            @RequestParam("startDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate startDate,
-            @RequestParam("endDate") @DateTimeFormat(iso = DateTimeFormat.ISO.DATE) LocalDate endDate) throws IOException {
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate startDate,
+            @RequestParam @DateTimeFormat(pattern = "dd-MM-yyyy") LocalDate endDate) throws IOException {
         ByteArrayInputStream stream = reportService.exportRevenueToExcel(startDate, endDate);
         HttpHeaders headers = new HttpHeaders();
         headers.add("Content-Disposition", "attachment; filename=Revenue_Report.xlsx");

@@ -3,6 +3,7 @@ package be.ehb.enterpriseapplications.werkstuk.controller;
 import be.ehb.enterpriseapplications.werkstuk.model.Auction;
 import be.ehb.enterpriseapplications.werkstuk.model.AuctionBid;
 import be.ehb.enterpriseapplications.werkstuk.service.AuctionService;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,9 +12,10 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
+@Tag(name = "Auctions", description = "Operations related to auctions")
 @Validated
 @RestController
-@RequestMapping("/auctions")
+@RequestMapping("/api/v1/auctions")
 public class AuctionController {
 
     private final AuctionService auctionService;
@@ -33,9 +35,13 @@ public class AuctionController {
     }
 
     @PostMapping
-    ResponseEntity<Auction> save(@Valid @RequestBody Auction auction) {
-      auctionService.save(auction);
-      return ResponseEntity.ok(auction);
+   ResponseEntity<Auction> createAuction(@Valid @RequestBody Auction auction) {
+        return ResponseEntity.ok(auctionService.createAuction(auction));
+    }
+
+    @GetMapping("/{id}")
+    ResponseEntity<Auction> getAuction(@PathVariable int id) {
+        return ResponseEntity.ok(auctionService.findById(id));
     }
 
     @GetMapping("{id}/bids")

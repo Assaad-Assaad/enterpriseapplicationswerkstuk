@@ -7,6 +7,7 @@ import be.ehb.enterpriseapplications.werkstuk.exception.ResourceException;
 import be.ehb.enterpriseapplications.werkstuk.model.Person;
 import be.ehb.enterpriseapplications.werkstuk.model.Role;
 import be.ehb.enterpriseapplications.werkstuk.repository.PersonRepository;
+import be.ehb.enterpriseapplications.werkstuk.repository.RoleRepository;
 import be.ehb.enterpriseapplications.werkstuk.util.JwtUtil;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -15,11 +16,13 @@ import org.springframework.stereotype.Service;
 public class AuthService {
 
     private final PersonRepository personRepository;
+    private final RoleRepository roleRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
 
-    public AuthService(PersonRepository personRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(PersonRepository personRepository, RoleRepository roleRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
         this.personRepository = personRepository;
+        this.roleRepository = roleRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
     }
@@ -37,7 +40,9 @@ public class AuthService {
 
 
         );
-        user.setRole(new Role(Role.RoleName.USER));
+        Role userRole = roleRepository.findByName(Role.RoleName.USER)
+                .orElseThrow(() -> new ResourceException("Error: Role is not found."));
+        user.setRole(userRole);
         personRepository.save(user);
         String token = jwtUtil.generateToken(user.getEmail(), user.getRole().getName().name());
         return new AuthResponse(token);
